@@ -1,0 +1,295 @@
+services:
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_GATEWAY_URL=http://localhost:8080
+    depends_on:
+      gateway:
+        condition: service_started
+
+  gateway:
+    build:
+      context: ./services/gateway-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./bin/gateway:/bin/gateway
+    environment:
+      - GATEWAY_PORT=8080
+      - AUTH_SERVICE_URL=http://auth:8081
+      - PROJECT_SERVICE_URL=http://project:8082
+      - TOPOLOGY_SERVICE_URL=http://topology:8083
+      - SIMULATION_SERVICE_URL=http://simulation:8084
+      - METRICS_SERVICE_URL=http://metrics:8085
+      - COST_SERVICE_URL=http://cost:8086
+      - CHAOS_SERVICE_URL=http://chaos:8087
+      - REPLAY_SERVICE_URL=http://replay:8088
+      - RECOMMENDATION_SERVICE_URL=http://recommendation:8089
+      - CATALOG_SERVICE_URL=http://catalog:8090
+      - IAC_SERVICE_URL=http://iac:8091
+      - TEMPLATE_SERVICE_URL=http://template:8092
+      - ADMIN_SERVICE_URL=http://admin:8093
+      - ALLOWED_ORIGIN=http://localhost:3000
+      - JWT_SECRET=dev-secret-change-me
+    depends_on:
+      auth:
+        condition: service_started
+      project:
+        condition: service_started
+      topology:
+        condition: service_started
+      simulation:
+        condition: service_started
+      metrics:
+        condition: service_started
+      cost:
+        condition: service_started
+      chaos:
+        condition: service_started
+      replay:
+        condition: service_started
+      recommendation:
+        condition: service_started
+      catalog:
+        condition: service_started
+      iac:
+        condition: service_started
+      template:
+        condition: service_started
+
+  auth:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./bin/auth:/bin/auth
+    environment:
+      - AUTH_PORT=8081
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - JWT_SECRET=dev-secret-change-me
+      - ACCESS_TOKEN_TTL_MINUTES=15
+      - REFRESH_TOKEN_TTL_HOURS=168
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-}
+      - OAUTH_REDIRECT_BASE=http://localhost:8080
+      - FRONTEND_URL=http://localhost:3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  project:
+    build:
+      context: ./services/project-service
+      dockerfile: Dockerfile
+    environment:
+      - PROJECT_PORT=8082
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./bin/project:/bin/project
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  topology:
+    build:
+      context: ./services/topology-service
+      dockerfile: Dockerfile
+    environment:
+      - TOPOLOGY_PORT=8083
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  simulation:
+    build:
+      context: ./services/simulation-service
+      dockerfile: Dockerfile
+    environment:
+      - SIMULATION_PORT=8084
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8084:8084"
+    volumes:
+      - ./bin/simulation:/bin/simulation
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  metrics:
+    build:
+      context: ./services/metrics-service
+      dockerfile: Dockerfile
+    environment:
+      - METRICS_PORT=8085
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8085:8085"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  cost:
+    build:
+      context: ./services/cost-service
+      dockerfile: Dockerfile
+    environment:
+      - COST_PORT=8086
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8086:8086"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  chaos:
+    build:
+      context: ./services/chaos-service
+      dockerfile: Dockerfile
+    environment:
+      - CHAOS_PORT=8087
+    ports:
+      - "8087:8087"
+
+  replay:
+    build:
+      context: ./services/replay-service
+      dockerfile: Dockerfile
+    environment:
+      - REPLAY_PORT=8088
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "8088:8088"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  recommendation:
+    build:
+      context: ./services/recommendation-service
+      dockerfile: Dockerfile
+    environment:
+      - RECOMMENDATION_PORT=8089
+    ports:
+      - "8089:8089"
+
+  catalog:
+    build:
+      context: ./services/cloud-catalog-service
+      dockerfile: Dockerfile
+    environment:
+      - CATALOG_PORT=8090
+    ports:
+      - "8090:8090"
+
+  iac:
+    build:
+      context: ./services/iac-service
+      dockerfile: Dockerfile
+    environment:
+      - IAC_PORT=8091
+    ports:
+      - "8091:8091"
+
+  template:
+    build:
+      context: ./services/template-service
+      dockerfile: Dockerfile
+    environment:
+      - TEMPLATE_PORT=8092
+    ports:
+      - "8092:8092"
+
+  admin:
+    build:
+      context: ./services/admin-service
+      dockerfile: Dockerfile
+    environment:
+      - PORT=8093
+      - DATABASE_URL=postgres://moktopus:moktopus@postgres:5432/moktopus?sslmode=disable
+    ports:
+      - "8093:8093"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=moktopus
+      - POSTGRES_PASSWORD=moktopus
+      - POSTGRES_DB=moktopus
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U moktopus -d moktopus"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    volumes:
+      - ./infra/observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:11.1.4
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
+  grafana_data:

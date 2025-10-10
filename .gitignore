@@ -1,0 +1,39 @@
+# Node
+node_modules/
+.next/
+out/
+
+# Go
+bin/
+*.exe
+*.test
+*.out
+
+# Env
+.env
+.env.local
+
+# IDE
+.vscode/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated and local-only project artifacts
+*.tsbuildinfo
+/sim-output.json
+/sim-req.json
+
+# Local planning documents
+/ArchDia 01.mmd
+/Architecture Diagram phase 3.md
+/Phase-1 SRS
+/Final-SRS
+/docs/*
+!/docs/architecture/
+!/docs/architecture/**
+/docs/architecture/final-srs-phases.md
