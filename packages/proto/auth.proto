@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package moktopus.auth.v1;
+
+option go_package = "moktopus/packages/sdk-go/authv1";
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  string full_name = 3;
+}
+
+message RegisterResponse {
+  string user_id = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string user_id = 1;
+  string access_token = 2;
+  string refresh_token = 3;
+}
+
+message ValidateTokenRequest {
+  string token = 1;
+}
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  string user_id = 2;
+  string email = 3;
+  string role = 4;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+}
+
+message RefreshResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc RefreshToken(RefreshRequest) returns (RefreshResponse);
+}
