@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package moktopus.cost.v1;
+
+option go_package = "moktopus/packages/sdk-go/costv1";
+
+message CostItem {
+  string resource_type = 1;
+  int32 count = 2;
+  double unit_monthly = 3;
+  double subtotal = 4;
+}
+
+message EstimateCostRequest {
+  string project_id = 1;
+  string run_id = 2;
+  string provider = 3;
+  string region = 4;
+}
+
+message EstimateCostResponse {
+  double total = 1;
+  string currency = 2;
+  repeated CostItem items = 3;
+}
+
+service CostService {
+  rpc EstimateCost(EstimateCostRequest) returns (EstimateCostResponse);
+}
