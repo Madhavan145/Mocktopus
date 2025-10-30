@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package moktopus.metrics.v1;
+
+option go_package = "moktopus/packages/sdk-go/metricsv1";
+
+message SimulationMetrics {
+  int32 requests_total = 1;
+  int32 completed = 2;
+  int32 failed = 3;
+  double rps = 4;
+  double avg_latency_ms = 5;
+  double p95_latency_ms = 6;
+  double p99_latency_ms = 7;
+  double error_rate = 8;
+  int32 queue_depth_max = 9;
+  double queue_wait_ms = 10;
+  double throughput = 11;
+  double cpu_estimate = 12;
+}
+
+message DeriveRequest {
+  string project_id = 1;
+  SimulationMetrics metrics = 2;
+}
+
+message TimeseriesPoint {
+  int32 tick = 1;
+  double latency_ms = 2;
+  double rps = 3;
+  double error_rate = 4;
+}
+
+message DeriveResponse {
+  double bottleneck_score = 1;
+  string capacity_hint = 2;
+  repeated TimeseriesPoint series = 3;
+}
+
+message StreamMetricsRequest {
+  string project_id = 1;
+  string run_id = 2;
+}
+
+message MetricSnapshot {
+  string project_id = 1;
+  int32 tick = 2;
+  double progress = 3;
+  SimulationMetrics summary = 4;
+  double bottleneck_score = 5;
+  string capacity_hint = 6;
+}
+
+service MetricsService {
+  rpc Derive(DeriveRequest) returns (DeriveResponse);
+  rpc StreamMetrics(StreamMetricsRequest) returns (stream MetricSnapshot);
+}

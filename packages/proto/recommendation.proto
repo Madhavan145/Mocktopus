@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package moktopus.recommendation.v1;
+
+option go_package = "moktopus/packages/sdk-go/recommendationv1";
+
+message Recommendation {
+  string id = 1;
+  string problem = 2;
+  string reason = 3;
+  string fix = 4;
+  double expected_latency_delta_pct = 5;
+  double expected_cost_delta_pct = 6;
+  double risk_score = 7;
+}
+
+message RecommendRequest {
+  string project_id = 1;
+  string run_id = 2;
+}
+
+message RecommendResponse {
+  repeated Recommendation recommendations = 1;
+  double confidence = 2;
+}
+
+service RecommendationService {
+  rpc GetRecommendations(RecommendRequest) returns (RecommendResponse);
+}

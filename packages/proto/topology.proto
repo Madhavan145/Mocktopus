@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package moktopus.topology.v1;
+
+option go_package = "moktopus/packages/sdk-go/topologyv1";
+
+message Position {
+  double x = 1;
+  double y = 2;
+}
+
+message NodeConfig {
+  map<string, string> config = 1;
+}
+
+message TopologyNode {
+  string id = 1;
+  string type = 2;
+  map<string, string> config = 3;
+  Position position = 4;
+}
+
+message TopologyEdge {
+  string id = 1;
+  string source = 2;
+  string target = 3;
+}
+
+message Graph {
+  repeated TopologyNode nodes = 1;
+  repeated TopologyEdge edges = 2;
+}
+
+message SaveTopologyRequest {
+  string project_id = 1;
+  Graph graph = 2;
+}
+
+message SaveTopologyResponse {
+  string project_id = 1;
+  string updated_at = 2;
+}
+
+message GetTopologyRequest {
+  string project_id = 1;
+}
+
+message GetTopologyResponse {
+  string project_id = 1;
+  Graph graph = 2;
+  Graph ctm = 3;
+  string updated_at = 4;
+}
+
+message ValidateRequest {
+  Graph graph = 1;
+}
+
+message ValidateResponse {
+  bool valid = 1;
+  repeated string errors = 2;
+}
+
+service TopologyService {
+  rpc SaveTopology(SaveTopologyRequest) returns (SaveTopologyResponse);
+  rpc GetTopology(GetTopologyRequest) returns (GetTopologyResponse);
+  rpc ValidateTopology(ValidateRequest) returns (ValidateResponse);
+}
