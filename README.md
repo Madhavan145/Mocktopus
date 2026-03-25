@@ -2,6 +2,7 @@
 
 Implementation is now being executed against `Final-SRS` in strict phases.
 
+
 ## Local-First Run
 
 Preferred:
@@ -30,6 +31,7 @@ Main endpoints:
 - `frontend`
 - `gateway`
 - `auth`
+- `admin`
 - `project`
 - `topology`
 - `simulation`
@@ -38,6 +40,9 @@ Main endpoints:
 - `chaos`
 - `replay`
 - `recommendation`
+- `catalog`
+- `iac`
+- `template`
 - `prometheus` (optional observability)
 - `grafana` (optional observability)
 - `postgres`
@@ -60,6 +65,10 @@ Core v1 endpoints now available include:
 - `/api/v1/cost/estimate`
 - `/api/v1/replay/reconstruct`
 - `/api/v1/recommendation/derive`
+- `/api/v1/catalog/*`
+- `/api/v1/iac/*`
+- `/api/v1/templates/*`
+- `/api/v1/admin/*`
 
 ## Final-SRS Build Phases
 
